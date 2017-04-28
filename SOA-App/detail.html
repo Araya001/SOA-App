@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous">
+    </script>
+  </head>
+  <body>
+    <div class="" id="res1">
+       </div>
+
+    <table border="1">
+
+    <thead>
+      <tr>
+        <th>SaleOrderDetail ID</th>
+        <th>Order Qty</th>
+        <th>Product Name</th>
+        <th>Unit Price</th>
+        <th>Unit Price Discount</th>
+      </tr>
+    </thead>
+    <tbody id="result"></tbody>
+</table>
+
+
+  </body>
+
+  <script type="text/javascript">
+    var apiURL = "";
+    var output = "";
+    var gpname;
+    $.urlParam = function(name){
+           var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+           return results[1] || 0;
+    }
+
+    $(function () {
+      apiURL = "http://saleorderdetail.azurewebsites.net/OrderDetail/Search/SaleOrderID/";
+      apiURL += $.urlParam("sid");
+        $.getJSON(apiURL, function(data) {
+          console.log(data);
+          var Head = "<h1> SaleOrderID: "+$.urlParam("sid")+"</h1><br>";
+            $("#res1").append(Head);
+
+          $.each(data, function(index, item) {
+
+            var papiURL = "http://977377productsapi.azurewebsites.net/api/v1/Products/";
+            papiURL += item.ProductID;
+            var output;
+
+            $.getJSON(papiURL, function(pdata) {
+              output = pdata.Name;
+              var keyword_link = "<a href='detail.html?sid=" + item.SalesOrderID + "'>view</a>"
+              var row = "<tr>"
+                  row += "<td>"+ item.SalesOrderDetailID + "</td><td>"+ item.OrderQty +"</td>"
+                  row += "<td>"+ output + "</td><td>"+ item.UnitPrice +"</td>"
+                  row += "<td>"+ item.UnitPriceDiscount + "</td>"
+                  row += "</tr>"
+              $("#result").append(row);
+            });
+
+          })
+        });
+    });
+
+
+
+  </script>
+</html>
